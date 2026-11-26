@@ -1342,6 +1342,19 @@ function setupParticleBackground() {
 }
 
 function setupAccessGate() {
+    const currentURL = new URL(window.location.href);
+    let removedSensitiveQuery = false;
+    for (const key of ["password", "passcode", "pwd"]) {
+        if (currentURL.searchParams.has(key)) {
+            currentURL.searchParams.delete(key);
+            removedSensitiveQuery = true;
+        }
+    }
+    if (removedSensitiveQuery) {
+        const safeURL = `${currentURL.pathname}${currentURL.search}${currentURL.hash}`;
+        window.history.replaceState(null, "", safeURL);
+    }
+
     const form = $("accessForm");
     const gate = $("accessGate");
     const workspace = $("workspace");
