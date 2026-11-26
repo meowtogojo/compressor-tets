@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#090d16">
     <title>CompressLab</title>
+    <script>
+        (() => {
+            const url = new URL(window.location.href);
+            let changed = false;
+            for (const key of ["password", "passcode", "pwd"]) {
+                if (url.searchParams.has(key)) {
+                    url.searchParams.delete(key);
+                    changed = true;
+                }
+            }
+            if (changed) {
+                window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="styles.css">
     <script type="module" src="script.js"></script>
 </head>
@@ -25,7 +40,7 @@
             <h2 id="accessTitle">Welcome back.</h2>
             <p class="access-description">Enter your passcode to open your local media workspace.</p>
 
-            <form id="accessForm" class="access-form">
+            <form id="accessForm" class="access-form" method="post">
                 <label for="accessPassword">Passcode</label>
                 <div class="password-field">
                     <input id="accessPassword" name="password" type="password" autocomplete="current-password" required>
