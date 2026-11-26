@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090d16">
+    <title>CompressLab</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="script.js"></script>
+</head>
+<body>
+    <canvas id="particleBackground" class="particle-background" aria-hidden="true"></canvas>
+
+    <section id="accessGate" class="access-gate" aria-labelledby="accessTitle">
+        <div class="access-card">
+            <div class="brand access-brand">
+                <div class="brand-icon" aria-hidden="true">C</div>
+                <div>
+                    <h1>CompressLab</h1>
+                    <p>Private media workspace</p>
+                </div>
+            </div>
+
+            <span class="eyebrow access-eyebrow"><span class="access-lock-icon" aria-hidden="true">◆</span> PRIVATE WORKSPACE</span>
+            <h2 id="accessTitle">Welcome back.</h2>
+            <p class="access-description">Enter your passcode to open your local media workspace.</p>
+
+            <form id="accessForm" class="access-form">
+                <label for="accessPassword">Passcode</label>
+                <div class="password-field">
+                    <input id="accessPassword" name="password" type="password" autocomplete="current-password" required>
+                    <button id="togglePassword" class="password-toggle" type="button" aria-label="Show passcode" aria-pressed="false">Show</button>
+                </div>
+                <button id="accessSubmit" class="primary-button" type="submit"><span>Unlock workspace</span><span aria-hidden="true">→</span></button>
+                <div id="accessVerification" class="verification-state hidden" aria-hidden="true">
+                    <span class="verification-spinner" aria-hidden="true"></span>
+                    <span>Analyzing password and verifying access…</span>
+                </div>
+                <p id="accessStatus" class="status-message access-status" aria-live="polite" role="status"></p>
+            </form>
+            <div class="access-assurance" aria-label="Workspace details">
+                <span><span aria-hidden="true">●</span> No account required</span>
+                <span><span aria-hidden="true">●</span> Local processing where supported</span>
+            </div>
+            <p class="access-note">This passcode is a convenience lock for this browser, not account security. It does not encrypt or protect files on this device.</p>
+        </div>
+    </section>
+
+    <div class="app hidden" id="workspace" aria-hidden="true">
+
+        <header class="header">
+            <div class="brand">
+                <div class="brand-icon">C</div>
+                <div>
+                    <h1>CompressLab</h1>
+                    <p>Media compression workspace</p>
+                </div>
+            </div>
+
+            <div class="engine-status">
+                <span class="status-dot"></span>
+                Browser engine
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <span class="eyebrow">MEDIA TOOLKIT</span>
+                <h2>Compress your media.</h2>
+                <p>Reduce file sizes while keeping your content looking and sounding good.</p>
+            </section>
+
+            <nav class="tabs" role="tablist" aria-label="Compression tools">
+                <button id="videoTab" class="tab active" type="button" role="tab" aria-controls="videoPanel" aria-selected="true" tabindex="0">
+                    Video
+                </button>
+                <button id="imageTab" class="tab" type="button" role="tab" aria-controls="imagePanel" aria-selected="false" tabindex="-1">
+                    Image
+                </button>
+                <button id="documentTab" class="tab" type="button" role="tab" aria-controls="documentPanel" aria-selected="false" tabindex="-1">
+                    Documents
+                </button>
+                <button id="consoleTab" class="tab" type="button" role="tab" aria-controls="consolePanel" aria-selected="false" tabindex="-1">
+                    Console
+                </button>
+            </nav>
+
+            <section id="videoPanel" class="panel" role="tabpanel" aria-labelledby="videoTab" tabindex="0">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Video compressor</h2>
+                        <p>Convert and compress videos into MP4 format.</p>
+                    </div>
+                    <span class="tag">MP4 OUTPUT</span>
+                </div>
+
+                <div id="videoDrop" class="drop-zone" role="button" tabindex="0" aria-label="Choose a video file or drop it here">
+                    <div class="upload-icon" aria-hidden="true">↑</div>
+                    <h3>Drop your video here</h3>
+                    <p>or tap to browse your files</p>
+                    <span>MP4, MOV, WebM and other supported formats</span>
+                    <input id="videoFile" type="file" accept="video/*" hidden>
+                </div>
+
+                <div id="videoFileCard" class="file-card hidden">
+                    <div class="file-info">
+                        <div class="file-symbol">VID</div>
+                        <div class="file-text">
+                            <strong id="videoName">Video</strong>
+                            <span id="videoDetails"></span>
+                        </div>
+                    </div>
+                    <button id="removeVideo" class="remove-button" type="button">
+                        Remove
+                    </button>
+                </div>
+
+                <div id="videoPreview" class="preview hidden">
+                    <video id="videoPreviewElement" controls playsinline></video>
+                </div>
+
+                <div class="settings">
+                    <div class="section-heading compact">
+                        <div>
+                            <h3>Compression settings</h3>
+                            <p>Adjust the output quality and size.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-grid">
+
+                        <label class="setting">
+                            <span>Encoder quality</span>
+                            <select id="videoQuality">
+                                <option value="low">Smaller file</option>
+                                <option value="medium" selected>Balanced · recommended</option>
+                                <option value="large">Higher quality</option>
+                            </select>
+                            <small>Controls H.264 quality. Hardware encoding is preferred when your browser supports it.</small>
+                        </label>
+
+                        <label class="setting">
+                            <span>Video bitrate target: <strong id="videoBitrateValue">70%</strong></span>
+                            <input id="videoBitrate" type="range" min="35" max="100" step="5" value="70">
+                            <small>Lower targets usually create smaller files; the result depends on the source video.</small>
+                        </label>
+
+                        <label class="setting">
+                            <span>Maximum resolution</span>
+                            <select id="videoResolution">
+                                <option value="original" selected>Original</option>
+                                <option value="1080">1080p</option>
+                                <option value="720">720p</option>
+                                <option value="480">480p</option>
+                            </select>
+                        </label>
+
+                        <label class="setting">
+                            <span>Frame rate</span>
+                            <select id="videoFps">
+                                <option value="original" selected>Original</option>
+                                <option value="60">60 FPS</option>
+                                <option value="30">30 FPS</option>
+                                <option value="24">24 FPS</option>
+                            </select>
+                        </label>
+
+                        <label class="setting">
+                            <span>Audio</span>
+                            <select id="videoAudio">
+                                <option value="keep" selected>Keep audio</option>
+                                <option value="remove">Remove audio</option>
+                            </select>
+                        </label>
+
+                    </div>
+                </div>
+
+                <div class="progress-area hidden" id="videoProgress">
+                    <div class="progress-heading">
+                        <span id="videoProgressText">Preparing...</span>
+                        <strong id="videoPercent">0%</strong>
+                    </div>
+
+                    <div class="progress-track">
+                        <div id="videoBar" class="progress-bar"></div>
+                    </div>
+
+                    <p id="videoProgressHint">Waiting to start.</p>
+                </div>
+
+                <button id="compressVideo" class="primary-button" type="button" disabled>
+                    Compress video
+                </button>
+
+                <p id="videoStatus" class="status-message" aria-live="polite"></p>
+
+                <div id="videoResult" class="result hidden"></div>
+
+            </section>
+
+            <section id="imagePanel" class="panel hidden" role="tabpanel" aria-labelledby="imageTab" tabindex="0">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Image compressor</h2>
+                        <p>Reduce image file sizes directly in your browser.</p>
+                    </div>
+                    <span class="tag">IMAGE OUTPUT</span>
+                </div>
+
+                <div id="imageDrop" class="drop-zone" role="button" tabindex="0" aria-label="Choose an image file or drop it here">
+                    <div class="upload-icon">↑</div>
+                    <h3>Drop your image here</h3>
+                    <p>or tap to browse your files</p>
+                    <span>JPG, PNG, WebP and other browser-supported images</span>
+                    <input id="imageFile" type="file" accept="image/*" hidden>
+                </div>
+
+                <div id="imageFileCard" class="file-card hidden">
+                    <div class="file-info">
+                        <div class="file-symbol">IMG</div>
+                        <div class="file-text">
+                            <strong id="imageName">Image</strong>
+                            <span id="imageDetails"></span>
+                        </div>
+                    </div>
+
+                    <button id="removeImage" class="remove-button" type="button">
+                        Remove
+                    </button>
+                </div>
+
+                <div id="imagePreview" class="preview hidden">
+                    <img id="imagePreviewElement" alt="Selected image preview">
+                </div>
+
+                <div class="settings">
+                    <div class="section-heading compact">
+                        <div>
+                            <h3>Compression settings</h3>
+                            <p>Choose your image output settings.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-grid">
+
+                        <label class="setting" id="imageQualitySetting">
+                            <span>Quality: <strong id="imageQualityValue">75%</strong></span>
+                            <input
+                                id="imageQuality"
+                                type="range"
+                                min="0.1"
+                                max="1"
+                                step="0.05"
+                                value="0.75"
+                            >
+                            <small id="imageQualityHint">Higher quality preserves more detail but can increase file size. Results also depend on the image and output format.</small>
+                        </label>
+
+                        <label class="setting">
+                            <span>Output format</span>
+                            <select id="imageFormat">
+                                <option value="image/webp" selected>WebP</option>
+                                <option value="image/jpeg">JPEG</option>
+                                <option value="image/png">PNG</option>
+                            </select>
+                        </label>
+
+                        <label class="setting">
+                            <span>Maximum dimension</span>
+                            <select id="imageSize">
+                                <option value="original" selected>Original size</option>
+                                <option value="2560">2560px</option>
+                                <option value="1920">1920px</option>
+                                <option value="1280">1280px</option>
+                                <option value="800">800px</option>
+                            </select>
+                            <small>Aspect ratio is preserved; images are never enlarged.</small>
+                        </label>
+
+                        <label class="setting" id="jpegBackgroundSetting">
+                            <span>JPEG background</span>
+                            <input id="jpegBackground" type="color" value="#ffffff" aria-label="Background color for transparent images saved as JPEG">
+                            <small>Transparent areas use this color when exporting as JPEG.</small>
+                        </label>
+
+                    </div>
+                </div>
+
+                <button id="compressImage" class="primary-button" type="button" disabled>
+                    Compress image
+                </button>
+
+                <p id="imageStatus" class="status-message" aria-live="polite"></p>
+
+                <div id="imageResult" class="result hidden"></div>
+
+            </section>
+
+            <section id="documentPanel" class="panel hidden" role="tabpanel" aria-labelledby="documentTab" tabindex="0">
+                <div class="section-heading">
+                    <div>
+                        <h2>Document gzip archive</h2>
+                        <p>Create a .gz archive of a PDF or Word file. This does not optimize the document itself, and already-compressed files may get larger.</p>
+                    </div>
+                    <span class="tag">GZIP COPY</span>
+                </div>
+
+                <div id="documentDrop" class="drop-zone" role="button" tabindex="0" aria-label="Choose a document file or drop it here">
+                    <div class="upload-icon">↑</div>
+                    <h3>Drop your document here</h3>
+                    <p>or tap to browse your files</p>
+                    <span>PDF, DOC and DOCX</span>
+                    <input id="documentFile" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+                </div>
+
+                <div id="documentFileCard" class="file-card hidden">
+                    <div class="file-info">
+                        <div class="file-symbol">DOC</div>
+                        <div class="file-text">
+                            <strong id="documentName">Document</strong>
+                            <span id="documentDetails"></span>
+                        </div>
+                    </div>
+                    <button id="removeDocument" class="remove-button" type="button">Remove</button>
+                </div>
+
+                <div class="settings document-settings">
+                    <div class="section-heading compact">
+                        <div>
+                            <h3>Size reduction goal</h3>
+                            <p>Choose how much smaller you hope the file will be.</p>
+                        </div>
+                    </div>
+                    <label class="setting" for="documentTarget">
+                        <span>Target: <strong id="documentTargetValue">20%</strong> smaller</span>
+                        <input id="documentTarget" type="range" min="0" max="90" step="5" value="20">
+                                                    <small>The target is a goal, not a guarantee. Many PDF and Word files are already compressed and may not get smaller.</small>
+                    </label>
+                </div>
+
+                <p class="status-message document-note">The download is a .gz archive, not a replacement document. Decompress it before opening the PDF or Word file.</p>
+                <div class="progress-area hidden" id="documentProgress">
+                    <div class="progress-heading">
+                        <span id="documentProgressText">Preparing...</span>
+                        <strong id="documentPercent">0%</strong>
+                    </div>
+                    <div class="progress-track">
+                        <div id="documentBar" class="progress-bar"></div>
+                    </div>
+                    <p id="documentProgressHint">Waiting to start.</p>
+                </div>
+                <button id="compressDocument" class="primary-button" type="button" disabled>Compress document</button>
+                <p id="documentStatus" class="status-message" aria-live="polite"></p>
+                <div id="documentResult" class="result hidden"></div>
+            </section>
+
+            <section id="consolePanel" class="panel hidden" role="tabpanel" aria-labelledby="consoleTab" tabindex="0">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Developer console</h2>
+                        <p>Live application events, warnings and errors.</p>
+                    </div>
+                    <span class="tag">LIVE LOGS</span>
+                </div>
+
+                <div class="console-toolbar">
+                    <div class="console-indicator">
+                        <span class="status-dot"></span>
+                        Console active
+                    </div>
+
+                    <button id="clearConsole" class="secondary-button" type="button">
+                        Clear logs
+                    </button>
+                </div>
+
+                <div id="consoleOutput" class="console-output">
+                    <div class="console-entry">
+                        <span class="console-time">SYSTEM</span>
+                        <span class="console-info">Waiting for application initialization...</span>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+        <footer class="footer">
+            <p>CompressLab · Browser-based media tools</p>
+            <p>Your files are processed locally in your browser where supported.</p>
+        </footer>
+
+    </div>
+</body>
+</html>
